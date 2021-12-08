@@ -3,3 +3,6 @@ This project(or MVP) is a simple 3 page demonstration of how Tensorflow.js can b
 
 ## API
 [Alpha Vantage](https://www.alphavantage.co/)
+
+## Project
+[View Project](https://ticker-tensor.netlify.app/)
