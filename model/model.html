@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Ticker Tensor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Bellefair&family=Barlow:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../index.css" />
+    <script src="../navigation.js" defer></script>
+    
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js" defer></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js" defer></script>
+
+    <script src="./model.js" defer></script>
+    <script src="./index.js" defer></script>
+  </head>
+  <body>
+    <div class="progress-container">
+      <div class="progress-bar" id="myBar"></div>
+    </div>
+    <header class="primary-header flex">
+      <a href="../index.html">
+      <div>
+        <img
+          src="../assets/shared/logo.svg"
+          alt="Ticker Tensor"
+          class="logo"
+        />
+      </div>
+      </a>
+      <button class="mobile-nav-toggle" aria-controls="primary-navigation">
+        <span class="sr-only" aria-expanded="false">Menu</span>
+      </button>
+      <nav>
+        <ul
+          id="primary-navigation"
+          data-visible="false"
+          class="primary-navigation underline-indicators flex"
+        >
+          <li>
+            <a
+              class="ff-sans-cond uppercase text-white letter-spacing-2"
+              href="../index.html"
+              ><span aria-hidden="true"></span>Home</a
+            >
+          </li>
+          <li class="active">
+            <a
+              class="ff-sans-cond uppercase text-white letter-spacing-2"
+              href="./model.html"
+              ><span aria-hidden="true"></span>Predict</a
+            >
+          </li>
+          <li >
+            <a
+              class="ff-sans-cond uppercase text-white letter-spacing-2"
+              href="../about.html"
+              ><span aria-hidden="true"></span>About</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- main-content -->
+
+    <div class="model">
+      <div class="card model-title">
+        <div class="card-title fs-600 special-title">
+          <h1>Stock Price Prediction using TensorFlow.js</h1>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title fs-500">
+          <h2>Load Stock Data</h2>
+        </div>
+        <div class="card-content">
+          <div class="get-stock-data">
+            <div class="form-item">
+              <label for="input_ticker">Ticker Symbol</label>
+              <input
+                type="text"
+                id="input_ticker"
+                placeholder="Example: TSLA"
+                value="TSLA"
+              />
+            </div>
+            <div class="form-item">
+              <label for="stock_exchange">Select Stock Exchange</label>
+              <select
+                name="stock-exchange"
+                onchange="onClickChangeStockExchange(this)"
+              >
+                <option
+                  value="NASDAQ"
+                  onchange="onClickChangeStockExchange('NASDAQ')"
+                  selected
+                >
+                  NASDAQ
+                </option>
+                <option
+                  value="BSE"
+                  onchange="onClickChangeStockExchange('BSE')"
+                >
+                  BSE
+                </option>
+              </select>
+            </div>
+            <div class="form-item">
+              <label>Data Temporal Resolutions</label>
+              <select name="time-period" onchange="onClickChangeDataFreq(this)">
+                <option
+                  value="Weekly"
+                  onchange="onClickChangeDataFreq('Weekly')"
+                  selected
+                >
+                  Weekly
+                </option>
+                <option value="Daily" onchange="onClickChangeDataFreq('Daily')">
+                  Daily
+                </option>
+              </select>
+            </div>
+            <button
+              class="form-item btn"
+              id="btn_fetch_data"
+              onclick="onClickFetchData()"
+            >
+              Fetch Data
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card" id="div_container_linegraph" style="display: none">
+        <div
+          class="card-title fs-500"
+          id="load-success"
+          style="color: rgb(66, 235, 66)"
+        ></div>
+        <div
+          class="card"
+          id="div_linegraph_data"
+          style="width: 100%; height: 25rem"
+        ></div>
+      </div>
+      <div class="card" id="load-fail" style="display: none">
+        <div class="card-title fs-500" style="color: rgb(179, 33, 33)">
+          Stock Not Found
+        </div>
+      </div>
+
+      <!-- E Get Stocks Data -->
+
+      <div class="card">
+        <div class="card-title fs-500">Simple Moving Average</div>
+
+        <div class="card-content">
+          <p>
+            Simple Moving Average (SMA) is a method to identify trends direction
+            for a certain period of time, by looking at the average of all the
+            values within that time window.
+          </p>
+
+          <div id="div_container_getsmafirst">
+            <div class="card-content">
+              <p>
+                To calculate SMA,<b> fetch stocks data </b> from the previous
+                section.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-content" id="div_container_getsma" style="display: none">
+            <div class="card-content">
+              TO generate the training dataset, click on the
+              <b>Compute SMA and Draw Chart</b> button.
+            </div>
+          <div class="form-item">
+            <label for="input_windowsize">Window Size</label>
+            <input
+              type="number"
+              id="input_windowsize"
+              placeholder="a number"
+              value="20"
+            />
+          </div>
+          <div class="card-content">
+            <button
+              class=" btn"
+              id="btn_draw_sma"
+              onclick="onClickDisplaySMA()"
+            >
+              Compute SMA and Draw Chart
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="div_container_sma" style="display: none">
+        <div id="div_linegraph_sma_title" class="card-title"></div>
+        <div class="card" id="div_linegraph_sma" style="width: 100%; height: 25rem"></div>
+      </div>
+
+
+    <div class="card" id="div_train">
+      <div class="card-title fs-600">Train Neural Network</div>
+      <div class="card-content">
+        <div class="card-content">
+         For training,<b> Sequential model </b>is selected which simply connects each layer and pass the data from
+          input to the output during the training process. In order for the
+          model to learn time series data which are sequential,
+         recurrent neural network (RNN) layer
+          layer is created and a number of
+         <b> LSTM  cells</b>
+          are added to the RNN.
+          <p>
+          The model will be trained using
+          <b>Adam</b>, a popular optimisation algorithm for machine learning.</p>
+        </div>
+        <div class="card-content">
+          These are the hyperparameters (parameters used in the training
+          process) available for tweaking:
+          <ol>
+          <li>
+            Training Dataset Size (%): The amount of data used for training, and
+            remaining data will be used for prediction
+          </li>
+          <li>
+            Epochs: Number of times the dataset is used to train the model
+          </li>
+          <li>
+            Learning Rate: Amount of change in the weights during training in
+            each step
+          </li>
+          <li>
+            Hidden LSTM Layers: To increase the model complexity to learn in
+            higher dimensional space
+          </li>
+          </ol>
+        </div>
+        <div class="card-content" id="div_container_trainfirst">
+            To train the model,<b> fetch stocks data and compute SMA</b> from the previous
+            section.
+        </div>
+      </div>
+      </div>
+
+        <div id="div_container_train"
+        class="card" style="display: none">
+            <div class="card-title fs-500" >
+                You can tweak the hyperparameters and then hit the
+                <b>Begin Training Model</b> button to train the model.  
+            </div>
+            <div class="card-content">
+              <div class="get-stock-data">
+              <div class="form-item">
+                <label for="input_trainingsize"
+                  >Training Dataset Size (%)</label
+                >
+                <input
+                  type="number"
+                  id="input_trainingsize"
+                  placeholder="a number between (1-99)"
+                  value="70"
+                />
+              </div>
+              <div class="form-item">
+                <label for="input_epochs">Epochs</label>
+                <input
+                  type="number"
+                  id="input_epochs"
+                  placeholder="a number"
+                  value="1"
+                />
+              </div>
+              <div class="form-item">
+                <label for="input_learningrate">Learning Rate</label>
+                <input
+                  type="number"
+                  id="input_learningrate"
+                  placeholder="a decimal"
+                  value="0.01"
+                />
+                <small class="form-text text-muted"
+                  >Typically range between 0.01 and 0.1</small
+                >
+              </div>
+              <div class="form-item">
+                <label for="input_hiddenlayers">Hidden LSTM Layers</label>
+                <input
+                  type="number"
+                  id="input_hiddenlayers"
+                  placeholder="a number'"
+                  value="1"
+                />
+                <small class="form-text text-muted"
+                  >Number of LSTM layers</small
+                >
+              </div>
+            <div class="form-item">
+              <button
+                class="btn"
+                id="btn_draw_trainmodel"
+                onclick="onClickTrainModel()"
+              >
+                Begin Training Model
+              </button>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <div class="card" id="div_container_training" style="display:none">
+
+                  <div class="training-card">
+                <div class="fs-600">Progress</div>
+                  <div
+                    class="determinate"
+                    id="div_training_progressbar"
+                    style="width: 100%"
+                  ></div>
+                <div class="fs-600">Loss</div>
+                <div class="card"
+                  id="div_linegraph_trainloss"
+                  style="width: 100%; height: 25rem"
+                ></div>
+                <div class="fs-600">Logs</div>
+                <div
+                  id="div_traininglog"
+                  style="overflow-x: hidden; overflow-y: hidden; height: 25rem"
+                ></div>
+              </div>
+            </div>
+
+    <!-- Train Neural Network -->
+
+    <div class="card">
+      <div class="card-title fs-500">Validation</div>
+      <div class="card-content">
+        <div class="card-content">
+          The data is split into 2 sets, a subset of the data is <b> training </b>and the
+          rest is the <b> validation </b> set. The training set has been used for
+          training the model, thus will be using the validation set to validate
+          the model. Since the model has not seen the data in the validation set
+          before, it will be good if the model is able to predict values that
+          are close to the exact values.
+        </div>
+        <div class="card-content">
+          So let us use the remaining data for prediction which allow us to see
+          how closely our predicted values are compared to the actual values.
+        </div>
+
+        <div class="card-content" id="div_container_validatefirst">
+          Please train a model before checking for validation.
+        </div>
+        </div>
+        </div>
+
+        <div class="card" id="div_container_validate" style="display:none">
+          <div class="card-content">
+              Hit the <b>Validate Model</b> button to see how this model
+              performs.
+          </div>
+          <div class="card-content">
+            <button
+              class="btn"
+              id="btn_validation"
+              onclick="onClickValidate()"
+            >
+              Validate Model
+            </button>
+          </div>
+        </div>
+
+        <div class="card" id="div_container_validating" style="display:none">
+                <div class="training-card" id="div_predict_title">
+                  <div class="fs-600">
+                  Compare True values to Predicted values</div>
+                <div id="div_validation_graph"  style="width: 100%; height: 25rem"></div>
+              </div>
+            </div>
+    
+    <!-- E Validation -->
+
+    <div class="card">
+      <div class="card-title fs-600">Make Prediction</div>
+      <div class="card-content">
+        <div class="fs-600">
+        Finally, its time to predict the possible future price of the stock.</div>
+        <div class="training-card">
+        <div class="card-content fs-400"><b>IMPORTANT NOTE</b> </div>
+            <div class="card-content">
+          If the model does not predict values that map closely to its true
+          values, check the training loss graph. Generally, this model should
+          converge with the loss to be less than 1. You can increase the number
+          of epochs, or tweak the other learning hyperparameters.
+        </div>
+        </div>
+        </div>
+      </div>
+        
+        <div class="card" id="div_container_predict" style="display:none">
+          <div class="card-content">
+              Hit the <b>Make Prediction</b> button to see how this model
+              performs.
+          </div>
+          <div class="card-content">
+            <button
+              class="btn"
+              id="btn_prediction"
+              onclick="onClickPredict()"
+            >
+              Make Prediction
+            </button>
+          </div>
+        </div>
+
+    <div class="card" id="div_container_predicting" style="display:none">
+      <div class="training-card" id="div_predict_title">
+        <div class="fs-600">
+        Predicted Graph</div>
+      <div id="div_prediction_graph"  style="width: 100%; height: 25rem"></div>
+    </div>
+  </div>
+    <!-- E Make Prediction -->
+
+  </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Bellefair&family=Barlow:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Our custom CSS -->
+    <link rel="stylesheet" href="index.css" />
+    <title>Ticker Tensor</title>
+    <script src="navigation.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-to-content" href="#main">Skip to content</a>
+    <header class="primary-header flex">
+      <a href="./index.html">
+        <div>
+          <img
+            src="./assets/shared/logo.svg"
+            alt="Ticker Tensor"
+            class="logo"
+          /></div
+      ></a>
+      <button class="mobile-nav-toggle" aria-controls="primary-navigation">
+        <span class="sr-only" aria-expanded="false">Menu</span>
+      </button>
+      <nav>
+        <ul
+          id="primary-navigation"
+          data-visible="false"
+          class="primary-navigation underline-indicators flex"
+        >
+          <li >
+            <a
+              class="ff-sans-cond uppercase text-white letter-spacing-2"
+              href="index.html"
+              ><span aria-hidden="true"></span>Home</a
+            >
+          </li>
+          <li>
+            <a
+              class="ff-sans-cond uppercase text-white letter-spacing-2"
+              href="./model/model.html"
+              ><span aria-hidden="true"></span>Predict</a
+            >
+          </li>
+          <li class="active">
+            <a
+              class="ff-sans-cond uppercase text-white letter-spacing-2"
+              href="./about.html"
+              ><span aria-hidden="true"></span>About</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <div class="model">
+        <div class="card">
+          <div class="card-title fs-700 special-title">
+            <h1>Made by <div class="underline-indicators"> <div style="cursor:default;"> Aman Mittal</div> </div> </h1>
+          </div>
+        </div>
+  </body>
+</html>
