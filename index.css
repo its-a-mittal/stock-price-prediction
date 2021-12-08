@@ -638,3 +638,8 @@ select {
   background: rgb(49, 154, 240);
   width: 0%;
 }
+
+.home{
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
